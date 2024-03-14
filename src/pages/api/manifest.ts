@@ -3,6 +3,8 @@ import { AppManifest } from "@saleor/app-sdk/types";
 
 import packageJson from "../../../package.json";
 import { orderCreatedWebhook } from "./webhooks/order-created";
+import { PaymentGatewayInitializeWebhook } from "./webhooks/payment-gateway-initialize-session";
+import { TransactionInitializeWebhook } from "./webhooks/transaction-initialize-session";
 
 /**
  * App SDK helps with the valid Saleor App Manifest creation. Read more:
@@ -19,7 +21,7 @@ export default createManifestHandler({
     const apiBaseURL = process.env.APP_API_BASE_URL ?? appBaseUrl;
 
     const manifest: AppManifest = {
-      name: 'Saleor App Template',
+      name: 'COD',
       tokenTargetUrl: `${apiBaseURL}/api/register`,
       appUrl: iframeBaseUrl,
       /**
@@ -32,9 +34,11 @@ export default createManifestHandler({
          *
          * This can be removed
          */
+        "HANDLE_CHECKOUTS",
+        "HANDLE_PAYMENTS",
         "MANAGE_ORDERS",
       ],
-      id: "saleor.app",
+      id: "app.saleor.cod",
       version: packageJson.version,
       /**
        * Configure webhooks here. They will be created in Saleor during installation
@@ -44,7 +48,10 @@ export default createManifestHandler({
        * Easiest way to create webhook is to use app-sdk
        * https://github.com/saleor/saleor-app-sdk/blob/main/docs/saleor-webhook.md
        */
-      webhooks: [orderCreatedWebhook.getWebhookManifest(apiBaseURL)],
+      webhooks: [
+        PaymentGatewayInitializeWebhook.getWebhookManifest(apiBaseURL),
+        orderCreatedWebhook.getWebhookManifest(apiBaseURL),
+        TransactionInitializeWebhook.getWebhookManifest(apiBaseURL)],
       /**
        * Optionally, extend Dashboard with custom UIs
        * https://docs.saleor.io/docs/3.x/developer/extending/apps/extending-dashboard-with-apps
