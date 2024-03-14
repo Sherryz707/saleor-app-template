@@ -4,7 +4,7 @@ import { PaymentGatewayInitializeSessionEventFragment, TransactionInitializeSess
 import { saleorApp } from "../../../saleor-app";
 import { createClient } from "../../../lib/create-graphq-client";
 
-function convertUnixTimestampToISOString(timestampInSeconds) {
+function convertUnixTimestampToISOString(timestampInSeconds:number) {
     const milliseconds = timestampInSeconds * 1000;
     return new Date(milliseconds).toISOString();
 }
