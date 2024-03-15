@@ -125,6 +125,8 @@ export default PaymentGatewayInitializeWebhook.createHandler((req, res, ctx) => 
      */
     authData,
   } = ctx;
+  try {
+  
 
   /**
    * Perform logic based on Saleor Event payload
@@ -146,7 +148,10 @@ export default PaymentGatewayInitializeWebhook.createHandler((req, res, ctx) => 
   /**
    * Inform Saleor that webhook was delivered properly.
    */
-    return res.json({ data: {"check": "ok cod"} })
+    return res.json({ data: { "check": "ok cod" } })
+  } catch (err) {
+    return res.json({ data: { "error": `${err instanceof Error ? `${err.name}:${err.message}` : "Something went wrong"}` } })
+    }
 });
 
 /**

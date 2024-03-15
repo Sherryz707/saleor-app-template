@@ -278,36 +278,45 @@ export default TransactionInitializeWebhook.createHandler((req, res, ctx) => {
      */
     authData,
   } = ctx;
+  try {
+    /**
+     * Perform logic based on Saleor Event payload
+     */
+    console.log(`transaction checking:`, payload);
 
-  /**
-   * Perform logic based on Saleor Event payload
-   */
-  console.log(`transaction checking:`,payload);
-
-  /**
-   * Create GraphQL client to interact with Saleor API.
-   */
-  const client = createClient(authData.saleorApiUrl, async () => ({ token: authData.token }));
+    /**
+     * Create GraphQL client to interact with Saleor API.
+     */
+    const client = createClient(authData.saleorApiUrl, async () => ({ token: authData.token }));
   
-  /**
-   * Now you can fetch additional data using urql.
-   * https://formidable.com/open-source/urql/docs/api/core/#clientquery
-   */
+    /**
+     * Now you can fetch additional data using urql.
+     * https://formidable.com/open-source/urql/docs/api/core/#clientquery
+     */
   
-  // const data = await client.query().toPromise()
+    // const data = await client.query().toPromise()
 
-  /**
-   * Inform Saleor that webhook was delivered properly.
-   */
+    /**
+     * Inform Saleor that webhook was delivered properly.
+     */
     return res.json({
-    pspReference: payload.transaction.id.toString(),
-    result: "AUTHORIZATION_SUCCESS",
-    amount: payload.action.amount,
-    time: convertUnixTimestampToISOString(Math.floor(Date.now() / 1000)),
-    externalUrl: "http://localhost:3000/",
-    message: "Successfull COD"
-});
-
+      pspReference: payload.transaction.id.toString(),
+      result: "AUTHORIZATION_SUCCESS",
+      amount: payload.action.amount,
+      time: convertUnixTimestampToISOString(Math.floor(Date.now() / 1000)),
+      externalUrl: saleorApp.apl,
+      message: "Successfull COD"
+    });
+  } catch (err:unknown) {
+    return res.json({
+      pspReference: payload.transaction.id.toString(),
+      result: "CHARGE_FAILURE",
+      amount: payload.action.amount,
+      time: convertUnixTimestampToISOString(Math.floor(Date.now() / 1000)),
+      externalUrl: saleorApp.apl,
+      message: `${err instanceof Error ? `${err.name}:${err.message}` : "Something went wrong"}`
+    });
+  }
 });
 
 /**
