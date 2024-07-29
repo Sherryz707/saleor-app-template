@@ -150,7 +150,7 @@ export default PaymentGatewayInitializeWebhook.createHandler((req, res, ctx) => 
    */
     return res.json({ data: { "check": "ok cod" } })
   } catch (err) {
-    return res.json({ data: { "error": `${err instanceof Error ? `${err.name}:${err.message}` : "Something went wrong"}` } })
+    return res.json({ data: { errors: `${err instanceof Error ? `${err.name}:${err.message}` : "Something went wrong"}` } })
     }
 });
 
